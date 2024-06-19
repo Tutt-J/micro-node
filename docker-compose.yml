@@ -8,6 +8,7 @@ services:
       - 3000:3000
     depends_on:
       - auth
+      - products
     env_file:
       - ./api-gateway/.env
     develop:
@@ -33,6 +34,22 @@ services:
           action: sync
         - path: ./auth/package.json
           action: rebuild
+  products:
+    build:
+      context: ./products
+      dockerfile: Dockerfile
+    container_name: products
+    depends_on:
+      - mongodb-products
+    env_file:
+      - ./products/.env
+    develop:
+      watch:
+        - path: ./products/
+          target: /app/
+          action: sync
+        - path: ./products/package.json
+          action: rebuild
   mongodb-auth:
     image: mongo:latest
     container_name: mongodb-auth
@@ -44,6 +61,18 @@ services:
       - mongodb_auth:/data/db
     ports:
       - 27018:27017
+  mongodb-products:
+    image: mongo:latest
+    container_name: mongodb-products
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodb_products:/data/db
+    ports:
+      - 27019:27017
 
 volumes:
   mongodb_auth:
+  mongodb_products:
