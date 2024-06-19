@@ -4,7 +4,8 @@
   "description": "A microsevice for auth (register and login)",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --legacy-watch server.js"
   },
   "author": "Wyona",
   "license": "ISC",

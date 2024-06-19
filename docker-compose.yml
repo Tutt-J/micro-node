@@ -1,0 +1,49 @@
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - 3000:3000
+    depends_on:
+      - auth
+    env_file:
+      - ./api-gateway/.env
+    develop:
+      watch:
+        - path: ./api-gateway/
+          target: /app/
+          action: sync
+        - path: ./api-gateway/package.json
+          action: rebuild
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    container_name: auth
+    depends_on:
+      - mongodb-auth
+    env_file:
+      - ./auth/.env
+    develop:
+      watch:
+        - path: ./auth/
+          target: /app/
+          action: sync
+        - path: ./auth/package.json
+          action: rebuild
+  mongodb-auth:
+    image: mongo:latest
+    container_name: mongodb-auth
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodb_auth:/data/db
+    ports:
+      - 27018:27017
+
+volumes:
+  mongodb_auth:
